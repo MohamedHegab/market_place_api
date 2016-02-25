@@ -23,6 +23,7 @@ group :test do
   gem 'rspec-rails', '~> 3.4', '>= 3.4.2'
   gem "factory_girl_rails"
   gem 'faker', '~> 1.6', '>= 1.6.3'
+  gem "shoulda-matchers"
 end
 
 #APIs
