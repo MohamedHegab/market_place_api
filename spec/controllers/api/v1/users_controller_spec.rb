@@ -51,4 +51,37 @@ RSpec.describe Api::V1::UsersController, type: :controller do
       it { should respond_with 422 }
     end
   end
+
+  describe "POST #update" do
+    before(:each) do 
+      @user = FactoryGirl.create(:user)
+    end
+    context "when is updated" do
+      before(:each) do
+        @valid_user_attributes = FactoryGirl.attributes_for(:user)
+        put :update, { id: @user.id , user: @valid_user_attributes }, format: :json
+      end
+
+      it "renders the Json record of the user currently updated" do
+        user_response = JSON.parse(response.body, symbolize_names: true)
+        expect(user_response[:email]).to eql @valid_user_attributes[:email]
+      end
+
+      it { should respond_with 200 }
+    end
+
+    context "when is not updated" do 
+      before(:each) do
+        @invalid_user_attributes = FactoryGirl.attributes_for(:user, email: nil)
+        put :update, { id: @user.id, user: @invalid_user_attributes}, format: :json
+      end
+
+      it "renders the Json errors on why the user couldn't be updated" do 
+        user_response = JSON.parse(response.body, symbolize_names: true)
+        expect(user_response[:errors][:email]).to include "can't be blank"
+      end
+
+      it { should respond_with 422 }
+    end
+  end
 end
