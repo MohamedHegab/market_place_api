@@ -76,12 +76,28 @@ RSpec.describe Api::V1::UsersController, type: :controller do
         put :update, { id: @user.id, user: @invalid_user_attributes}, format: :json
       end
 
+      it "renders an errors json" do
+        user_response = JSON.parse(response.body, symbolize_names: true)
+        expect(user_response).to have_key(:errors)
+      end
+
       it "renders the Json errors on why the user couldn't be updated" do 
         user_response = JSON.parse(response.body, symbolize_names: true)
         expect(user_response[:errors][:email]).to include "can't be blank"
       end
 
       it { should respond_with 422 }
+    end
+  end
+
+  describe "Delete #destroy" do 
+    context "when is destroyed" do 
+      before(:each) do 
+        @user = FactoryGirl.create(:user)
+        delete :destroy, { id: @user.id }, format: :json
+      end
+
+      it { should respond_with 204 }
     end
   end
 end
